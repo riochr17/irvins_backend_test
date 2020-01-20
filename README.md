@@ -11,7 +11,8 @@ npm install
 ## Usage
 
 ```
-npm start
+npm start // <-- start backend
+npm test // <-- testing rest api
 ```
 
 ## Thank you
