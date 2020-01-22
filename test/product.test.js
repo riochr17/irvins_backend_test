@@ -7,6 +7,7 @@ const chaiHttp = require('chai-http');
 const server = require('./../index');
 const db = require('./../data-manager');
 const should = chai.should();
+const dbmongo = require('./../mongodb/db');
 
 chai.use(chaiHttp);
 
@@ -15,6 +16,7 @@ describe('Products', () => {
     const product = { name: "P1", price: 2000 };
     let created_product_id;
     before((done) => {
+        dbmongo.getAllProducts();
         db.set('products', []).write();
         done();
     });
@@ -25,14 +27,14 @@ describe('Products', () => {
             .send(product)
             .end((err, res) => {
                 res.should.have.status(201);
-                res.body.should.be.a('object');
+                res.body.should.be.an('object');
                 res.body.should.have.property('data');
-                res.body.data.should.be.a('object');
-                res.body.data.should.have.property('id');
+                res.body.data.should.be.an('object');
+                res.body.data.should.have.property('_id');
                 res.body.data.should.have.property('name').eql(product.name);
                 res.body.data.should.have.property('price').eql(product.price);
                 res.body.data.should.have.property('image');
-                created_product_id = res.body.data.id;
+                created_product_id = res.body.data._id;
                 done();
             });
     });
@@ -41,10 +43,10 @@ describe('Products', () => {
             .get(`/products/${created_product_id}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('object');
+                res.body.should.be.an('object');
                 res.body.should.have.property('data');
-                res.body.data.should.be.a('object');
-                res.body.data.should.have.property('id');
+                res.body.data.should.be.an('object');
+                res.body.data.should.have.property('_id');
                 res.body.data.should.have.property('name').eql(product.name);
                 res.body.data.should.have.property('price').eql(product.price);
                 res.body.data.should.have.property('image');
@@ -61,10 +63,10 @@ describe('Products', () => {
             })
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('object');
+                res.body.should.be.an('object');
                 res.body.should.have.property('data');
-                res.body.data.should.be.a('object');
-                res.body.data.should.have.property('id');
+                res.body.data.should.be.an('object');
+                res.body.data.should.have.property('_id');
                 res.body.data.should.have.property('name').eql(new_name);
                 res.body.data.should.have.property('price').eql(product.price);
                 res.body.data.should.have.property('image');
@@ -76,7 +78,7 @@ describe('Products', () => {
             .delete(`/products/${created_product_id}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('object');
+                res.body.should.be.an('object');
                 res.body.should.have.property('data');
                 res.body.data.should.be.a('array');
                 res.body.data[0].should.be.a('string').eql(created_product_id);
